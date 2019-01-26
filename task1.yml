@@ -1,0 +1,11 @@
+---
+ - hosts: localhost
+   ignore_errors: yes
+   tasks:
+    - name: this command prints a message when it fails
+      yum: name=aashiiii  state=present
+      register: y
+    - debug: var=y
+    - debug: msg="installation failed...this package is not available"
+      when: y.failed == true 
+
