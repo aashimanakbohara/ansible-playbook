@@ -1,0 +1,9 @@
+---
+ - hosts: localhost
+   tasks:
+    - name: install httpd
+      yum: name=httpd state=present
+    - get_url: url=http://192.168.10.254/automation/httpd.conf  dest=/etc/httpd/conf.d/sample.conf 
+    - copy: content="Adhoc Networks" dest=/var/www/html/index.html        #create=yes...(in exam)
+    - lineinfile: line="Adhoc Networks from {{ansible_hostname}}" dest=/var/www/html/index.html
+    - service: name=httpd state=started enabled=yes
