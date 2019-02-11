@@ -1,0 +1,18 @@
+---
+ - hosts: localhost
+   ignore_errors: yes
+   tasks: 
+    - name: install a package
+      yum: name=ekt23 state=present
+      register: x
+    - debug: var=x
+    - debug: msg="Installation Failed"
+      when: x.failed == true
+    - service: name=ekt23 state=restarted
+      register: y
+    - debug: var=y
+    - debug: msg="Service Failed"
+      when: y.failed == true
+    - debug: msg="Playbook was unsuccessful"
+      when: x.failed == true or y.failed == true
+
