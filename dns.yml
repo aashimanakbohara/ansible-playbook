@@ -1,0 +1,36 @@
+---
+ - hosts: localhost
+   tasks:
+
+    - name: install bind package
+      yum: name=bind state=present
+
+    - name: copy back up of configuration file of bind package
+    #  copy: src=/etc/named.conf dest=/etc/named.conf.backup
+    - shell: mv /etc/named.conf   /etc/named.conf.backup
+    - shell: touch /etc/named.conf
+
+    - name: enter details in conf file
+      blockinfile:
+         path: /etc/named.conf
+         block: |
+               options {
+                  directory "/var/named";
+               };
+               zone "pani.com" IN {
+                    file "panidb";
+                    type master;
+               };
+
+
+    - copy: src=/var/named/named.localhost   dest=/var/named/panidb
+
+    - lineinfile: path=/var/named/panidb  line='dns.pani.com.    A       192.168.10.34'
+
+    - lineinfile: path=/var/named/panidb  line='lab.pani.com.    A   192.168.10.147'
+
+    - lineinfile: path=/var/named/panidb  line='adhoc    CName      lab'
+
+    - shell: chown named:named /var/named/panidb
+
+    - service: name=named state=restarted enabled=yes
