@@ -3,7 +3,6 @@
    gather_facts: false 
    tasks:
     - name: ensure a list of packages installed
-      #shell: yum install -y httpd docker sshd firewalld
       yum:
         name:
         - httpd
@@ -55,15 +54,6 @@
       when: 
        - status.ansible_facts.services['smb.service']['state'] == "stopped"
 
- #   - block:
-  #     - service:
-    #      name: nfs-server
-     #     state: started
-      # - debug:
-       #   msg: nfs-server service is stopped and now restarting
-     # when: 
-      # - status.ansible_facts.services['nfs-server.service']['state'] == "stopped"
-
     - block:
        - service:
           name: sshd
@@ -72,9 +62,6 @@
           msg: sshd service is stopped and now restarting
       when:
        - status.ansible_facts.services['sshd.service']['state'] == "stopped"
-
-
-
 
  #     loop:
   #      - "{{ status.ansible_facts.services['httpd.service']['state'] }}"
