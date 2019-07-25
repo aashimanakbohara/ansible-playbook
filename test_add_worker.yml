@@ -1,5 +1,5 @@
 ---
- - hosts: 103.255.101.222
+ - hosts: IP
    tasks:
     - name: Update and Upgrade apt-get
       shell: sudo apt-get update -y && sudo apt-get upgrade -y 
@@ -65,8 +65,8 @@
   #  - name: Add nodes
    #   docker_swarm:
    #     state: join
-  #      advertise_addr: 103.255.101.226
- #       join_token: SWMTKN-1-00ehw2435b0l6qtewpwcmo9qr5b58i91apgmt8t5rj6ojdcxu6-bhusez5p6h2y3g1m0rl8j1hfo
-#        remote_addrs: [ '103.255.101.226:2377' ]
+  #      advertise_addr: ip
+ #       join_token: SWMTKN-1-00ehw2435b0l6qtewpwcmo9qr5b58i91apgmt8t5rj6ojdcxu6-bhusez5p6h2y3g1m0rl8j1o
+#        remote_addrs: [ 'IP:PORT' ]
 
 
