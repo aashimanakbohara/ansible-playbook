@@ -1,0 +1,72 @@
+---
+ - hosts: 103.255.101.222
+   tasks:
+    - name: Update and Upgrade apt-get
+      shell: sudo apt-get update -y && sudo apt-get upgrade -y 
+
+    - name: Install the packages.
+      apt:
+         name: ['apt-transport-https', 'software-properties-common', 'ca-certificates']
+         update_cache: yes
+
+
+    - name: Add Docker GPG key
+      #shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+      apt_key: 
+         url: https://download.docker.com/linux/ubuntu/gpg
+         state: present
+    
+ 
+    - name: Add Docker APT repository 
+     # shell: sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable
+        filename: /etc/apt/sources.list
+
+    - name: Update
+      shell: apt-get update -y
+
+    - name: Install Docker
+     # shell: sudo apt-get install -y docker-ce
+      apt:
+        name: docker.io
+        update_cache: yes
+
+
+    - name: Start and enable the service of Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+
+    - name: Ensure Docker group is present
+      group:
+        name: docker
+        state: present
+
+
+    - name: Add the user dockeruser
+      user:   
+        name: dockeruser
+        group: docker
+        append: yes
+
+
+    - name: Restart  the service of Docker 
+      service: 
+        name: docker 
+        state: restarted 
+
+    - name: Install python-pip and docker-py
+      shell: apt install python-pip
+      shell: pip install docker-py  
+
+  #  - name: Add nodes
+   #   docker_swarm:
+   #     state: join
+  #      advertise_addr: 103.255.101.226
+ #       join_token: SWMTKN-1-00ehw2435b0l6qtewpwcmo9qr5b58i91apgmt8t5rj6ojdcxu6-bhusez5p6h2y3g1m0rl8j1hfo
+#        remote_addrs: [ '103.255.101.226:2377' ]
+
+

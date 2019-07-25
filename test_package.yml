@@ -1,0 +1,93 @@
+---
+ - hosts: localhost
+   gather_facts: false 
+   tasks:
+    - name: ensure a list of packages installed
+      #shell: yum install -y httpd docker sshd firewalld
+      yum:
+        name:
+        - httpd
+        - bind
+        - docker
+        - samba
+#        - nfs-utils
+        - openssh-server
+        state: present
+
+    - service_facts: 
+      register: status
+    - debug:
+        var: status
+
+    - block:
+       - service:
+          name: httpd
+          state: started
+       - debug:
+          msg: httpd service is stopped and now restarting
+      when: 
+       - status.ansible_facts.services['httpd.service']['state'] == "stopped"
+
+    - block:
+       - service:
+          name: named
+          state: started
+       - debug:
+          msg: named service is stopped and now restarting
+      when: 
+       - status.ansible_facts.services['named.service']['state'] == "stopped"
+
+    - block:
+       - service:
+          name: docker
+          state: started
+       - debug:
+          msg: docker service is stopped and now restarting
+      when: 
+       - status.ansible_facts.services['docker.service']['state'] == "stopped"
+
+    - block:
+       - service:
+          name: smb
+          state: started
+       - debug:
+          msg: smb service is stopped and now restarting
+      when: 
+       - status.ansible_facts.services['smb.service']['state'] == "stopped"
+
+ #   - block:
+  #     - service:
+    #      name: nfs-server
+     #     state: started
+      # - debug:
+       #   msg: nfs-server service is stopped and now restarting
+     # when: 
+      # - status.ansible_facts.services['nfs-server.service']['state'] == "stopped"
+
+    - block:
+       - service:
+          name: sshd
+          state: started
+       - debug:
+          msg: sshd service is stopped and now restarting
+      when:
+       - status.ansible_facts.services['sshd.service']['state'] == "stopped"
+
+
+
+
+ #     loop:
+  #      - "{{ status.ansible_facts.services['httpd.service']['state'] }}"
+   #     - "{{ status.ansible_facts.services['named.service']['state'] }}"
+    #    - "{{ status.ansible_facts.services['docker.service']['state'] }}"
+     #   - "{{ status.ansible_facts.services['smb.service']['state'] }}"
+      #  - "{{ status.ansible_facts.services['nfs-server.service']['state'] }}"
+     #  - "{{ status.ansible_facts.services['sshd.service']['state'] }}"
+
+
+
+
+
+
+
+
