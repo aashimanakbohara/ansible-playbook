@@ -1,0 +1,4 @@
+---
+ - hosts: localhost
+   tasks: 
+    - replace: path=/etc/ansible/a.html   regexp="aashi"   replace="prakhar"
