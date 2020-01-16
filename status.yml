@@ -1,0 +1,18 @@
+---
+ - hosts: localhost
+   gather_facts: no
+   tasks:
+    - name: install htppd
+      yum:
+        name: httpd
+        state: present
+    - name: starting httpd
+      service: name=httpd state=started enabled=yes
+ 
+    - name: httpd status
+      command: systemctl status httpd
+      register: httpd_status  
+  
+    - name: httpd status output with stdout
+      debug:
+        var: httpd_status.stdout_lines
