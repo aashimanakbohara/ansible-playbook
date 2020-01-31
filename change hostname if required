@@ -1,0 +1,15 @@
+---
+ - hosts: localhost
+   tasks:
+    - name: check hostname
+      shell: hostname "aashi.example.com"
+      when: ansible_hostname != 'aashi.example.com'
+
+
+    - lineinfile:
+        dest: /etc/hosts
+        regexp: 'ip aa.example.com'
+        line: 'ip aashi.example.com'
+        state: present
+
+## write ip of your server
