@@ -1,0 +1,59 @@
+---
+ - hosts: localhost
+   tasks:
+    - name: for debian servers
+      apt: 
+        deb: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.5.1-amd64.deb
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    
+    - name: Add rpm 
+      get_url: 
+        url: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.5.1-x86_64.rpm
+        dest: /root
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' 
+
+    - yum:
+        name: metricbeat-7.5.1-x86_64.rpm
+        state: present
+
+    - replace:
+        path: "{{ item.path }}"
+        regexp: "{{ item.regexp }}"
+        replace: "{{ item.replace }}"
+      with_items: 
+        - { path: '/etc/metricbeat/metricbeat.yml', regexp: 'localhost:9200', replace: '103.238.223.114:9200' }
+ 
+    - lineinfile:
+        path: /etc/metricbeat/metricbeat.yml
+        insertafter: 'hosts:'
+        line: 'username: "elastic"'
+
+    - lineinfile:
+        path: /etc/metricbeat/metricbeat.yml
+        insertafter: 'username:'
+        line: 'password: "2PHtQuicxDU"'
+
+
+    - lineinfile:
+        path: /etc/metricbeat/metricbeat.yml
+        insertafter: 'setup.kibana:'
+        line: 'host: "ip:5601"'
+# in place of ip write the correct ip
+
+    - shell: metricbeat modules enable system
+
+    - replace:
+        path: /etc/metricbeat/modules.d/system.yml
+        regexp: '#- core'
+        replace: '- core'
+
+    - replace:
+        path: /etc/metricbeat/modules.d/system.yml
+        regexp: '#- diskio' 
+        replace: '- diskio'
+
+    - name: Starting the metric beat service :-
+      service:
+        name:  metricbeat 
+        state: started
+        enabled: yes
